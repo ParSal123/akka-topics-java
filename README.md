@@ -11,3 +11,5 @@ mvn compile exec:exec -Dfile=WalletApp
 ```
 
 I tried to write examples exaclty as they are written in scala.
+
+The original repo is [here](https://github.com/franciscolopezsancho/akka-topics)
