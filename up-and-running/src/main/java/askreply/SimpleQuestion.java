@@ -40,7 +40,7 @@ class Manager {
         return Behaviors.setup(context -> Behaviors.receive(Command.class).onMessage(Delegate.class, delegate -> {
             for (String text : delegate.texts) {
                 ActorRef<Worker.Command> worker = context.spawn(Worker.create(text), String.format("worker-%s", text));
-                context.ask(Worker.Response.class, worker, Duration.ofSeconds(3), replyTo -> new Worker.Parse(text, replyTo), (response, throwable) -> {
+                context.ask(Worker.Response.class, worker, Duration.ofSeconds(3), replyTo -> new Worker.Parse(replyTo), (response, throwable) -> {
                     if (throwable == null) {
                         return new Report(String.format("%s read by %s", text, worker.path().name()));
                     } else {
@@ -93,7 +93,7 @@ class Worker {
     sealed interface Response {
     }
 
-    record Parse(String text, ActorRef<Response> replyTo) implements Command {
+    record Parse(ActorRef<Response> replyTo) implements Command {
     }
 
     static final class Done implements Response {
