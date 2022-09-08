@@ -70,7 +70,7 @@ class Worker {
     static Behavior<Command> create(String text) {
         return Behaviors.setup(context -> Behaviors.receive(Command.class).onMessage(Parse.class, parse -> {
             fakeLenghtyParsing(text);
-            prettyParse(context, text);
+            prettyParse(context, "DONE!");
             parse.replyTo.tell(new Done());
             return Behaviors.same();
         }).build());
