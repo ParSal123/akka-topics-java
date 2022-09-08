@@ -42,23 +42,23 @@ class Guardian {
                 context -> {
                     context.getLog().info("setting up. Creating manager");
                     ActorRef<Manager.Command> manager = context.spawn(Manager.create(), "manager-alpha");
-//                    return Behaviors.receiveMessage(
-//                            msg -> {
-//                                if (msg instanceof Start) {
-//                                    context.getLog().info("starting");
-//                                    manager.tell(new Manager.Delegate(((Start) msg).texts));
-//                                    return Behaviors.same();
-//                                } else
-//                                    return Behaviors.unhandled();
-//                            });
-                    return BehaviorBuilder.<Command>create()
-                            .onMessage(
-                                    Guardian.Start.class,
-                                    start -> {
-                                        manager.tell(new Manager.Delegate(start.texts));
-                                        return Behaviors.same();
-                                    })
-                            .build();
+                    return Behaviors.receiveMessage(
+                            msg -> {
+                                if (msg instanceof Start start) {
+                                    context.getLog().info("starting");
+                                    manager.tell(new Manager.Delegate(start.texts));
+                                    return Behaviors.same();
+                                } else
+                                    return Behaviors.unhandled();
+                            });
+//                    return BehaviorBuilder.<Command>create()
+//                            .onMessage(
+//                                    Guardian.Start.class,
+//                                    start -> {
+//                                        manager.tell(new Manager.Delegate(start.texts));
+//                                        return Behaviors.same();
+//                                    })
+//                            .build();
                 });
     }
 }
@@ -157,7 +157,7 @@ class Worker {
                                                     .getLog()
                                                     .info("'{}' DONE!. Parsed result: {}", context.getSelf(), parsed);
                                             parse.replyTo.tell(new Done(parsed));
-                                            return Behaviors.same();
+                                            return Behaviors.stopped();
                                         })
                                 .build());
     }
