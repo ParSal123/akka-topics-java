@@ -1,8 +1,8 @@
-import java.io.IOException;
-
 import akka.actor.typed.ActorSystem;
 import akka.actor.typed.Behavior;
 import akka.actor.typed.javadsl.Behaviors;
+
+import java.io.IOException;
 
 class WalletApp {
 
