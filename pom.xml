@@ -21,6 +21,7 @@
 
     <modules>
         <module>up-and-running</module>
+        <module>one-actor-is-no-actor</module>
     </modules>
 
     <dependencyManagement>
