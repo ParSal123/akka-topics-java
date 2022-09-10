@@ -11,7 +11,6 @@
         <groupId>akka-topics-java</groupId>
         <artifactId>examples</artifactId>
         <version>1.0.0</version>
-        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <name>Chapter 2: Up and Running</name>
