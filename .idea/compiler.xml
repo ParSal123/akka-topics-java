@@ -7,6 +7,7 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="up-and-running" />
+        <module name="unit-testing" />
         <module name="one-actor-is-no-actor" />
       </profile>
     </annotationProcessing>

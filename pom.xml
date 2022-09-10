@@ -17,11 +17,14 @@
         <scala.binary.version>2.13</scala.binary.version>
         <logback.version>1.2.11</logback.version>
         <akka.version>2.6.20</akka.version>
+        <surefire.version>3.0.0-M7</surefire.version>
+        <exec.plugin.version>3.1.0</exec.plugin.version>
     </properties>
 
     <modules>
         <module>up-and-running</module>
         <module>one-actor-is-no-actor</module>
+        <module>unit-testing</module>
     </modules>
 
     <dependencyManagement>
@@ -50,11 +53,20 @@
     </dependencies>
 
     <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>${surefire.version}</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
         <plugins>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
-                <version>3.1.0</version>
+                <version>${exec.plugin.version}</version>
             </plugin>
         </plugins>
     </build>
