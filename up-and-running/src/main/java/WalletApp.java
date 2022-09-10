@@ -4,7 +4,7 @@ import akka.actor.typed.javadsl.Behaviors;
 
 import java.io.IOException;
 
-class WalletApp {
+public class WalletApp {
 
     public static void main(String[] args) throws IOException {
         ActorSystem<Integer> guardian = ActorSystem.create(createWallet(), "hello-world");
@@ -16,7 +16,7 @@ class WalletApp {
         guardian.terminate();
     }
 
-    static Behavior<Integer> createWallet() {
+    public static Behavior<Integer> createWallet() {
         return Behaviors.receive((context, message) -> {
             context.getLog().info("received '{}' dollar(s)", message);
             return Behaviors.same();

@@ -1,36 +1,19 @@
-import java.io.IOException;
-
 import akka.actor.typed.ActorSystem;
 import akka.actor.typed.Behavior;
 import akka.actor.typed.javadsl.Behaviors;
 
-class WalletOnOffApp {
+import java.io.IOException;
 
-    sealed interface Command {
-    }
+public class WalletOnOffApp {
 
-    static final class Increase implements Command {
-        public final int currency;
-
-        public Increase(int currency) {
-            this.currency = currency;
-        }
-    }
-
-    static final class Deactivate implements Command {
-    }
-
-    static final class Activate implements Command {
-    }
-
-    static Behavior<Command> createWallet() {
+    public static Behavior<Command> createWallet() {
         return activated(0);
     }
 
-    static Behavior<Command> activated(int count) {
+    public static Behavior<Command> activated(int count) {
         return Behaviors.receive((context, message) -> {
-            if (message instanceof Increase) {
-                int current = count + ((Increase) message).currency;
+            if (message instanceof Increase increase) {
+                int current = count + increase.currency;
                 context.getLog().info("increasing to {}", current);
                 return activated(current);
             } else if (message instanceof Deactivate) {
@@ -44,7 +27,7 @@ class WalletOnOffApp {
         });
     }
 
-    static Behavior<Command> deactivated(int count) {
+    public static Behavior<Command> deactivated(int count) {
         return Behaviors.receive((context, message) -> {
             if (message instanceof Increase) {
                 context.getLog().info("wallet is deactivated. Can't increase");
@@ -72,5 +55,17 @@ class WalletOnOffApp {
         System.out.println("Press ENTER to terminate");
         System.in.read();
         guardian.terminate();
+    }
+
+    public sealed interface Command {
+    }
+
+    public record Increase(int currency) implements Command {
+    }
+
+    public static final class Deactivate implements Command {
+    }
+
+    public static final class Activate implements Command {
     }
 }

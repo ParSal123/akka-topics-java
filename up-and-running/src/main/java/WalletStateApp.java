@@ -1,34 +1,15 @@
-import java.io.IOException;
-
 import akka.actor.typed.ActorSystem;
 import akka.actor.typed.Behavior;
 import akka.actor.typed.javadsl.Behaviors;
 
-class WalletStateApp {
+import java.io.IOException;
 
-    public sealed interface Command {
-    }
-
-    public static final class Increase implements Command {
-        public final int currency;
-
-        public Increase(int currency) {
-            this.currency = currency;
-        }
-    }
-
-    public static final class Decrease implements Command {
-        public final int currency;
-
-        public Decrease(int currency) {
-            this.currency = currency;
-        }
-    }
+public class WalletStateApp {
 
     public static Behavior<Command> createWallet(int count, int max) {
         return Behaviors.receive((context, message) -> {
-            if (message instanceof Increase) {
-                int current = count + ((Increase) message).currency;
+            if (message instanceof Increase increase) {
+                int current = count + increase.currency;
                 if (current <= max) {
                     context.getLog().info("increasing to {}", current);
                     return createWallet(current, max);
@@ -36,8 +17,8 @@ class WalletStateApp {
                     context.getLog().info("I'm overloaded. Counting '{}' while max is '{}'. Stopping", current, max);
                     return Behaviors.same();
                 }
-            } else if (message instanceof Decrease) {
-                int current = count - ((Decrease) message).currency;
+            } else if (message instanceof Decrease decrease) {
+                int current = count - decrease.currency;
                 if (current < 0) {
                     context.getLog().info("Can't run below zero. Stopping.");
                     return Behaviors.stopped();
@@ -61,6 +42,15 @@ class WalletStateApp {
         System.out.println("Press ENTER to terminate");
         System.in.read();
         guardian.terminate();
+    }
+
+    public sealed interface Command {
+    }
+
+    public record Increase(int currency) implements Command {
+    }
+
+    public record Decrease(int currency) implements Command {
     }
 
 }

@@ -1,45 +1,23 @@
-import java.io.IOException;
-import java.time.Duration;
-
 import akka.actor.typed.ActorSystem;
 import akka.actor.typed.Behavior;
 import akka.actor.typed.javadsl.Behaviors;
 
-class WalletTimerApp {
-    sealed interface Command {
-    }
+import java.io.IOException;
+import java.time.Duration;
 
-    static final class Increase implements Command {
-        public final int currency;
-
-        public Increase(int currency) {
-            this.currency = currency;
-        }
-    }
-
-    static final class Deactivate implements Command {
-        public final int seconds;
-
-        public Deactivate(int seconds) {
-            this.seconds = seconds;
-        }
-    }
-
-    private static final class Activate implements Command {
-    }
-
-    static Behavior<Command> createWallet() {
+public class WalletTimerApp {
+    public static Behavior<Command> createWallet() {
         return activated(0);
     }
 
-    static Behavior<Command> activated(int total) {
+    public static Behavior<Command> activated(int total) {
         return Behaviors.receive((context, message) -> Behaviors.withTimers(timers -> {
-            if (message instanceof Increase) {
-                int current = total + ((Increase) message).currency;
+            if (message instanceof Increase increase) {
+                int current = total + increase.currency;
                 context.getLog().info("increasing to {}", current);
                 return activated(current);
-            } else if (message instanceof Deactivate) {
-                timers.startSingleTimer(new Activate(), Duration.ofSeconds(((Deactivate) message).seconds));
+            } else if (message instanceof Deactivate deactivate) {
+                timers.startSingleTimer(new Activate(), Duration.ofSeconds(deactivate.seconds));
                 return deactivated(total);
             } else if (message instanceof Activate) {
                 return Behaviors.same();
@@ -50,7 +28,7 @@ class WalletTimerApp {
         }));
     }
 
-    static Behavior<Command> deactivated(int total) {
+    public static Behavior<Command> deactivated(int total) {
         return Behaviors.receive((context, message) -> {
             if (message instanceof Increase) {
                 context.getLog().info("wallet is deactivated. Can't increase");
@@ -76,5 +54,17 @@ class WalletTimerApp {
         System.out.println("Press ENTER to terminate");
         System.in.read();
         guardian.terminate();
+    }
+
+    public sealed interface Command {
+    }
+
+    public record Increase(int currency) implements Command {
+    }
+
+    public record Deactivate(int seconds) implements Command {
+    }
+
+    private static final class Activate implements Command {
     }
 }
