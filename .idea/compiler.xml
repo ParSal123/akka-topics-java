@@ -7,11 +7,8 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="up-and-running" />
+        <module name="one-actor-is-no-actor" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="akka-topics-java" target="17" />
-      <module name="up-and-running" target="17" />
-    </bytecodeTargetLevel>
   </component>
 </project>
