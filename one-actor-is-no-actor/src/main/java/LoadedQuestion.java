@@ -1,5 +1,5 @@
-package ask.content;
-
+/* This file was deleted from the original repo. */
+package loadedask;
 import akka.actor.typed.ActorRef;
 import akka.actor.typed.ActorSystem;
 import akka.actor.typed.Behavior;
@@ -7,9 +7,11 @@ import akka.actor.typed.javadsl.ActorContext;
 import akka.actor.typed.javadsl.Behaviors;
 
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.concurrent.ThreadLocalRandom;
 
-class LoadedQuestion {
+public class LoadedQuestion {
     public static void main(String[] args) {
         ActorSystem<Guardian.Command> guardian = ActorSystem.create(Guardian.create(), "LoadedQuestion");
         guardian.tell(new Guardian.Start());
@@ -17,30 +19,30 @@ class LoadedQuestion {
 }
 
 class Guardian {
-    static Behavior<Command> create() {
+    public static Behavior<Command> create() {
         return Behaviors.setup(context -> {
             ActorRef<Manager.Command> manager = context.spawn(Manager.create(), "manager-1");
             return Behaviors.receive(Command.class).onMessage(Start.class, start -> {
-                manager.tell(new Manager.Delegate(new String[]{"file-a", "file-b", "file-c"}));
+                manager.tell(new Manager.Delegate(new ArrayList<>(Arrays.asList("file-a", "file-b", "file-c"))));
                 return Behaviors.same();
             }).build();
         });
     }
 
-    sealed interface Command {
+    public sealed interface Command {
     }
 
-    static final class Start implements Command {
+    public static final class Start implements Command {
     }
 
 }
 
 class Manager {
-    static Behavior<Command> create() {
+    public static Behavior<Command> create() {
         return Behaviors.setup(context -> Behaviors.receive(Command.class).onMessage(Delegate.class, delegate -> {
             for (String file : delegate.files) {
-                ActorRef<ask.content.Reader.Command> reader = context.spawn(ask.content.Reader.create(), String.format("reader-%s", file));
-                context.ask(ask.content.Reader.Response.class, reader, Duration.ofSeconds(3), replyTo -> new Reader.Read(file, replyTo), (response, throwable) -> {
+                ActorRef<Reader.Command> reader = context.spawn(Reader.create(), String.format("reader-%s", file));
+                context.ask(Reader.Response.class, reader, Duration.ofSeconds(3), replyTo -> new Reader.Read(file, replyTo), (response, throwable) -> {
                     if (throwable == null) {
                         return new Report(String.format("%s read by %s", file, reader.path().name()));
                     } else {
@@ -55,10 +57,10 @@ class Manager {
         }).build());
     }
 
-    sealed interface Command {
+    public sealed interface Command {
     }
 
-    record Delegate(String[] files) implements Command {
+    public record Delegate(ArrayList<String> files) implements Command {
     }
 
     private record Report(String outline) implements Command {
@@ -67,7 +69,7 @@ class Manager {
 
 class Reader {
 
-    static Behavior<Command> create() {
+    public static Behavior<Command> create() {
         return Behaviors.setup(context -> Behaviors.receive(Command.class).onMessage(Read.class, read -> {
             fakeReading(read.file);
             prettyPrint(context, read.file + " done"); // to show that it's done when delay
@@ -76,26 +78,26 @@ class Reader {
         }).build());
     }
 
-    static void fakeReading(String file) {
+    public static void fakeReading(String file) {
         var endTime = System.currentTimeMillis() + ThreadLocalRandom.current().nextInt(2000, 4000);
         while (System.currentTimeMillis() < endTime) {
             // do nothing
         }
     }
 
-    static void prettyPrint(ActorContext<?> context, String message) {
+    public static void prettyPrint(ActorContext<?> context, String message) {
         context.getLog().info("{}: {}", context.getSelf().path().name(), message);
     }
 
-    sealed interface Command {
+    public sealed interface Command {
     }
 
-    sealed interface Response {
+    public sealed interface Response {
     }
 
-    record Read(String file, ActorRef<Response> replyTo) implements Command {
+    public record Read(String file, ActorRef<Response> replyTo) implements Command {
     }
 
-    static final class Done implements Response {
+    public static final class Done implements Response {
     }
 }
