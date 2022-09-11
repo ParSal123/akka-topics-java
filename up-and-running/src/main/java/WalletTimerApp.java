@@ -1,3 +1,5 @@
+package state;
+
 import akka.actor.typed.ActorSystem;
 import akka.actor.typed.Behavior;
 import akka.actor.typed.javadsl.Behaviors;
@@ -6,6 +8,21 @@ import java.io.IOException;
 import java.time.Duration;
 
 public class WalletTimerApp {
+
+    public static void main(String[] args) throws IOException {
+        ActorSystem<WalletTimer.Command> guardian = ActorSystem.create(WalletTimer.createWallet(), "wallet-activated");
+        guardian.tell(new WalletTimer.Increase(1));
+        guardian.tell(new WalletTimer.Deactivate(3));
+
+        System.out.println("Press ENTER to terminate");
+        System.in.read();
+        guardian.terminate();
+    }
+
+}
+
+class WalletTimer {
+
     public static Behavior<Command> createWallet() {
         return activated(0);
     }
@@ -44,16 +61,6 @@ public class WalletTimerApp {
                 return Behaviors.unhandled();
             }
         });
-    }
-
-    public static void main(String[] args) throws IOException {
-        ActorSystem<Command> guardian = ActorSystem.create(WalletTimerApp.createWallet(), "wallet-activated");
-        guardian.tell(new Increase(1));
-        guardian.tell(new Deactivate(3));
-
-        System.out.println("Press ENTER to terminate");
-        System.in.read();
-        guardian.terminate();
     }
 
     public sealed interface Command {
