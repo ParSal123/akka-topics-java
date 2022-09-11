@@ -1,4 +1,4 @@
-//package basics;
+package basics;
 
 import akka.actor.testkit.typed.CapturedLogEvent;
 import akka.actor.testkit.typed.Effect;
@@ -31,7 +31,8 @@ class SyncTestingSpec {
 //      As to why this succeeds, our current SimplifiedWorker is Behaviors.ignore(),
 //      which returns the same instance every time under the hood. If you change it to
 //      something else, the test will fail.
-//      You should be using the line below for this assertion.
+//      You should be using the line below for this assertion:
+
 //      import static org.junit.jupiter.api.Assertions.assertEquals;
 //      assertEquals("adan", testKit.expectEffectClass(Effect.Spawned.class).childName());
         testKit.expectEffect(new Effect.Spawned<>(SimplifiedWorker.create(), "adan", Props.empty(), null));
