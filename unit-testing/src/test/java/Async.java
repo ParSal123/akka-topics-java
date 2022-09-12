@@ -20,6 +20,11 @@ class AsyncTestingExampleSpec {
         testKit = ActorTestKit.create();
     }
 
+    @AfterAll
+    static void teardown() {
+        testKit.shutdownTestKit();
+    }
+
     @Test
     void ActorEncoderMustReturnSameString() {
         var echo = testKit.spawn(Encoder.create(), "Akka");
