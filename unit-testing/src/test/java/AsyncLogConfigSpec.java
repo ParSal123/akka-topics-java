@@ -71,7 +71,8 @@ class AsyncLogConfigSpec {
             return null;
         };
 
-        LoggingTestKit.empty().withLogLevel(Level.INFO).withMessageRegex(".*Message.*to.*carl.*was not delivered.*2.*dead letters encountered").expect(testKit.system(), tellHelloToCarl);
+        LoggingTestKit.empty().withLogLevel(Level.INFO).withMessageRegex(".*Message.*to.*carl.*was not delivered.*2" +
+                ".*dead letters encountered").expect(testKit.system(), tellHelloToCarl);
     }
 }
 

@@ -12,8 +12,6 @@ S
 #.idea/sonarlint/issuestore/index.pb,9/f/9fe84ebb15faf917b7def6236dba604453cc61e0
 D
 unit-testing/pom.xml,a/c/ac4782f4b9b23529afc4236978f0a986022eb62a
-T
-$unit-testing/src/test/java/Sync.java,c/9/c9f8ac99873698f666cd5f9df302cbeaca082cad
 7
 pom.xml,4/4/442292b8a7efeabbe4cc176709b833b1792140ec
 [
@@ -26,3 +24,11 @@ $unit-testing/src/test/java/Sync.java,c/9/c9f8ac99873698f666cd5f9df302cbeaca082
 0up-and-running/src/main/java/WalletTimerApp.java,3/2/3206d2944bb6a84fc1740e2171f7f7f904a08260
 g
 7one-actor-is-no-actor/src/main/java/ErrorKernelApp.java,9/0/9036cefcd1bb120c73cb9947014a0b11caf43669
+g
+7one-actor-is-no-actor/src/main/java/SimpleQuestion.java,d/6/d61c5525f939cfac27fce3bc20a762182c8f7e40
+U
+%unit-testing/src/test/java/Async.java,4/c/4cafebc27a21f229e97d023bbe66299e7d3b3a9c
+^
+.unit-testing/src/test/resources/in-memory.conf,3/d/3d1065274964ac2bd0cd7d1edac433fd97d259fe
+\
+,unit-testing/src/test/java/AsyncLogSpec.java,d/c/dc344938f3b266a90f89a4d71bc6446b67cefea3
