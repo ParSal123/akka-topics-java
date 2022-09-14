@@ -12,25 +12,6 @@
     <artifactId>unit-testing</artifactId>
     <name>Chapter 4: Akka test kit</name>
 
-    <properties>
-        <junit.version>5.9.0</junit.version>
-    </properties>
-
-
-    <dependencies>
-        <dependency>
-            <groupId>com.typesafe.akka</groupId>
-            <artifactId>akka-actor-testkit-typed_${scala.binary.version}</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter</artifactId>
-            <version>${junit.version}</version>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
-
     <build>
         <plugins>
             <plugin>

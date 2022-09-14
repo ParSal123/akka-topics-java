@@ -17,7 +17,9 @@
         <scala.binary.version>2.13</scala.binary.version>
         <logback.version>1.2.11</logback.version>
         <akka.version>2.6.20</akka.version>
+        <!--    surefire version needs to be at least 2.22 for it to automatically recognize junit tests    -->
         <surefire.version>3.0.0-M7</surefire.version>
+        <junit.version>5.9.0</junit.version>
         <exec.plugin.version>3.1.0</exec.plugin.version>
     </properties>
 
@@ -25,6 +27,7 @@
         <module>up-and-running</module>
         <module>one-actor-is-no-actor</module>
         <module>unit-testing</module>
+        <module>supervision</module>
     </modules>
 
     <dependencyManagement>
@@ -44,11 +47,25 @@
             <groupId>com.typesafe.akka</groupId>
             <artifactId>akka-actor-typed_${scala.binary.version}</artifactId>
         </dependency>
+
         <!-- https://mvnrepository.com/artifact/ch.qos.logback/logback-classic -->
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
             <version>${logback.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.typesafe.akka</groupId>
+            <artifactId>akka-actor-testkit-typed_${scala.binary.version}</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

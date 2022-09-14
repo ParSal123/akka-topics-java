@@ -9,6 +9,7 @@
         <module name="up-and-running" />
         <module name="unit-testing" />
         <module name="one-actor-is-no-actor" />
+        <module name="supervision" />
       </profile>
     </annotationProcessing>
   </component>

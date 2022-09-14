@@ -10,10 +10,6 @@ M
 one-actor-is-no-actor/pom.xml,6/2/6244c39dee7845265e038998805dbc671599cd6c
 S
 #.idea/sonarlint/issuestore/index.pb,9/f/9fe84ebb15faf917b7def6236dba604453cc61e0
-D
-unit-testing/pom.xml,a/c/ac4782f4b9b23529afc4236978f0a986022eb62a
-7
-pom.xml,4/4/442292b8a7efeabbe4cc176709b833b1792140ec
 [
 +up-and-running/src/main/java/WalletApp.java,4/b/4bd30cd100322e4938a469f2c204c386c5894dd3
 `
@@ -32,3 +28,7 @@ U
 .unit-testing/src/test/resources/in-memory.conf,3/d/3d1065274964ac2bd0cd7d1edac433fd97d259fe
 \
 ,unit-testing/src/test/java/AsyncLogSpec.java,d/c/dc344938f3b266a90f89a4d71bc6446b67cefea3
+T
+$unit-testing/src/test/java/Sync.java,c/9/c9f8ac99873698f666cd5f9df302cbeaca082cad
+d
+4unit-testing/src/main/java/fishing/CounterTimer.java,7/3/73c2f7ef1e0c8eee802ec061cbafcaf96ec04763
