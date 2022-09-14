@@ -6,7 +6,7 @@ import akka.actor.typed.javadsl.Behaviors;
 
 class WalletOnOffApp {
 
-    sealed interface Command {
+    interface Command {
     }
 
     static final class Increase implements Command {

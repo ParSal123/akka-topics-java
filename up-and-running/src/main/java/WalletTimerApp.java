@@ -6,7 +6,7 @@ import akka.actor.typed.Behavior;
 import akka.actor.typed.javadsl.Behaviors;
 
 class WalletTimerApp {
-    sealed interface Command {
+    interface Command {
     }
 
     static final class Increase implements Command {

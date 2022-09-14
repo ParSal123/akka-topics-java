@@ -6,7 +6,7 @@ import akka.actor.typed.javadsl.Behaviors;
 
 class WalletStateApp {
 
-    public sealed interface Command {
+    public interface Command {
     }
 
     public static final class Increase implements Command {
@@ -53,7 +53,7 @@ class WalletStateApp {
     }
 
     public static void main(String[] args) throws IOException {
-        ActorSystem<Command> guardian = ActorSystem.create(createWallet(0, 2), "wallet-state");
+        ActorSystem<Command> guardian = ActorSystem.create(createWallet(0, 2), "wallet-state-app");
         guardian.tell(new Increase(1));
         guardian.tell(new Increase(1));
         guardian.tell(new Increase(1));
