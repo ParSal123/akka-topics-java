@@ -1,45 +1,40 @@
-import java.io.IOException;
-import java.time.Duration;
+package state;
 
 import akka.actor.typed.ActorSystem;
 import akka.actor.typed.Behavior;
 import akka.actor.typed.javadsl.Behaviors;
 
-class WalletTimerApp {
-    interface Command {
+import java.io.IOException;
+import java.time.Duration;
+
+public class WalletTimerApp {
+
+    public static void main(String[] args) throws IOException {
+        ActorSystem<WalletTimer.Command> guardian = ActorSystem.create(WalletTimer.createWallet(), "wallet-activated");
+        guardian.tell(new WalletTimer.Increase(1));
+        guardian.tell(new WalletTimer.Deactivate(3));
+
+        System.out.println("Press ENTER to terminate");
+        System.in.read();
+        guardian.terminate();
     }
 
-    static final class Increase implements Command {
-        public final int currency;
+}
 
-        public Increase(int currency) {
-            this.currency = currency;
-        }
-    }
+class WalletTimer {
 
-    static final class Deactivate implements Command {
-        public final int seconds;
-
-        public Deactivate(int seconds) {
-            this.seconds = seconds;
-        }
-    }
-
-    private static final class Activate implements Command {
-    }
-
-    static Behavior<Command> createWallet() {
+    public static Behavior<Command> createWallet() {
         return activated(0);
     }
 
-    static Behavior<Command> activated(int total) {
+    public static Behavior<Command> activated(int total) {
         return Behaviors.receive((context, message) -> Behaviors.withTimers(timers -> {
-            if (message instanceof Increase) {
-                int current = total + ((Increase) message).currency;
+            if (message instanceof Increase increase) {
+                int current = total + increase.currency;
                 context.getLog().info("increasing to {}", current);
                 return activated(current);
-            } else if (message instanceof Deactivate) {
-                timers.startSingleTimer(new Activate(), Duration.ofSeconds(((Deactivate) message).seconds));
+            } else if (message instanceof Deactivate deactivate) {
+                timers.startSingleTimer(new Activate(), Duration.ofSeconds(deactivate.seconds));
                 return deactivated(total);
             } else if (message instanceof Activate) {
                 return Behaviors.same();
@@ -50,7 +45,7 @@ class WalletTimerApp {
         }));
     }
 
-    static Behavior<Command> deactivated(int total) {
+    public static Behavior<Command> deactivated(int total) {
         return Behaviors.receive((context, message) -> {
             if (message instanceof Increase) {
                 context.getLog().info("wallet is deactivated. Can't increase");
@@ -68,13 +63,15 @@ class WalletTimerApp {
         });
     }
 
-    public static void main(String[] args) throws IOException {
-        ActorSystem<Command> guardian = ActorSystem.create(WalletTimerApp.createWallet(), "wallet-activated");
-        guardian.tell(new Increase(1));
-        guardian.tell(new Deactivate(3));
+    public sealed interface Command {
+    }
 
-        System.out.println("Press ENTER to terminate");
-        System.in.read();
-        guardian.terminate();
+    public record Increase(int currency) implements Command {
+    }
+
+    public record Deactivate(int seconds) implements Command {
+    }
+
+    private static final class Activate implements Command {
     }
 }
