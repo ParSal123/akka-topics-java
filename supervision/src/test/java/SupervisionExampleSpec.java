@@ -10,7 +10,6 @@ class SupervisionExampleSpec {
     static final ActorTestKit testKit =
             ActorTestKit.create(ConfigFactory.parseString("akka.jvm-exit-on-fatal-error " + "= false"));
 
-    @Rule
 
     @AfterAll
     static void tearDown() {
