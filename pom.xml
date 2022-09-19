@@ -28,6 +28,7 @@
         <module>one-actor-is-no-actor</module>
         <module>unit-testing</module>
         <module>supervision</module>
+        <module>discovery-routers</module>
     </modules>
 
     <dependencyManagement>
