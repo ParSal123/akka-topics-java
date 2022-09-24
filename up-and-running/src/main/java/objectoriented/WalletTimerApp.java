@@ -1,4 +1,4 @@
-package style.object_oriented;
+package objectoriented;
 
 import akka.actor.typed.ActorSystem;
 import akka.actor.typed.Behavior;
