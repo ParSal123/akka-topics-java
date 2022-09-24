@@ -28,6 +28,7 @@
         <module>one-actor-is-no-actor</module>
         <module>unit-testing</module>
         <module>supervision</module>
+        <module>discovery-routers</module>
     </modules>
 
     <dependencyManagement>
@@ -76,6 +77,11 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>${surefire.version}</version>
+                    <configuration>
+                        <includes>
+                            <include>*Spec*</include>
+                        </includes>
+                    </configuration>
                 </plugin>
             </plugins>
         </pluginManagement>
