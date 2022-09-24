@@ -8,6 +8,15 @@ import java.io.IOException;
 import java.time.Duration;
 
 public class WalletTimerApp extends AbstractBehavior<WalletTimerApp.Command> {
+    public static void main(String[] args) throws IOException, InterruptedException {
+        ActorSystem<Command> guardian = ActorSystem.create(WalletTimerApp.create(100), "wallet-activated");
+        guardian.tell(new Increase(1));
+        guardian.tell(new Deactivate(3));
+
+        System.out.println("Press ENTER to terminate");
+        System.in.read();
+        guardian.terminate();
+    }
     TimerScheduler<Command> timers;
     int currency = 0;
 
@@ -51,6 +60,10 @@ public class WalletTimerApp extends AbstractBehavior<WalletTimerApp.Command> {
 
     @Override
     public Receive<Command> createReceive() {
+        return activate();
+    }
+
+    private Receive<Command> activate() {
         return newReceiveBuilder()
                 .onMessage(Increase.class, this::increaseWallet)
                 .onMessage(Deactivate.class, this::deactivateWallet)
@@ -60,7 +73,7 @@ public class WalletTimerApp extends AbstractBehavior<WalletTimerApp.Command> {
     private Behavior<Command> increaseWallet(Increase increase) {
         currency += increase.currency;
         getContext().getLog().info("increasing to {}", currency);
-        return Behaviors.same();
+        return this;
     }
 
     private Behavior<Command> deactivateWallet(Deactivate deactivate) {
@@ -68,28 +81,17 @@ public class WalletTimerApp extends AbstractBehavior<WalletTimerApp.Command> {
         timers.startSingleTimer(new Activate(), Duration.ofSeconds(deactivate.seconds));
 
         return Behaviors.receive(Command.class).onMessage(Activate.class, activate -> {
-                    getContext().getLog().info("wallet active again");
-                    return createReceive();
+                    getContext().getLog().info("activating");
+                    return activate();
                 })
                 .onMessage(Increase.class, increase -> {
                     getContext().getLog().info("wallet is deactivated. Can't increase");
-                    return Behaviors.same();
+                    return this;
                 }).onMessage(Deactivate.class, d -> {
                     getContext().getLog().info("wallet is deactivated. Can't be deactivated again");
-                    return Behaviors.same();
+                    return this;
                 })
                 .build();
     }
 
-    public static void main(String[] args) throws IOException, InterruptedException {
-        ActorSystem<Command> guardian = ActorSystem.create(WalletTimerApp.create(100), "wallet-activated");
-        guardian.tell(new Increase(1));
-        guardian.tell(new Deactivate(3));
-        guardian.tell(new Increase(1));
-        Thread.sleep(4000);
-        guardian.tell(new Increase(1));
-        System.out.println("Press ENTER to terminate");
-        System.in.read();
-        guardian.terminate();
-    }
 }

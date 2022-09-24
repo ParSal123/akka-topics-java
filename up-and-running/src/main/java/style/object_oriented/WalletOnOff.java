@@ -9,39 +9,44 @@ import akka.actor.typed.javadsl.Receive;
 
 import java.io.IOException;
 
-public class WalletOnOffApp extends AbstractBehavior<WalletOnOffApp.Command> {
+public class WalletOnOff extends AbstractBehavior<WalletOnOff.Command> {
 
-    public WalletOnOffApp(ActorContext<Command> context, int credit) {
+    public WalletOnOff(ActorContext<Command> context, int credit) {
         super(context);
-        this.credit=credit;
+        this.credit = credit;
     }
 
     public static void main(String[] args) throws IOException {
-        final ActorSystem<Command> systemGuardian = ActorSystem.create(WalletOnOffApp.create(), "walletApp");
-        systemGuardian.tell(new Active());
-        systemGuardian.tell(new Increase(20));
-        systemGuardian.tell(new Deactivate());
-        systemGuardian.tell(new Increase(10));
-        systemGuardian.tell(new Active());
-        systemGuardian.tell(new Increase(5));
+        final ActorSystem<Command> guardian = ActorSystem.create(WalletOnOff.create(), "wallet-on-off");
+        guardian.tell(new Increase(1));
+        guardian.tell(new Deactivate());
+        guardian.tell(new Increase(1));
+        guardian.tell(new Active());
+        guardian.tell(new Increase(1));
+
         System.out.println("Press ENTER to terminate");
         System.in.read();
-        systemGuardian.terminate();
+        guardian.terminate();
     }
+
     private int credit = 0;
 
     @Override
     public Receive<Command> createReceive() {
+        return activated();
+    }
+
+    private Receive<Command> activated() {
         return newReceiveBuilder()
                 .onMessage(Active.class, message -> {
-                    getContext().getLog().debug("wallet is active");
-                    return Behaviors.same();
+                    getContext().getLog().info("wallet is active");
+                    return this;
                 })
-                .onMessage(Deactivate.class, message -> deactivateWallet())
+                .onMessage(Deactivate.class, message -> deactivated())
                 .onMessage(Increase.class, message -> {
                     credit += message.currency;
-                    getContext().getLog().debug("new credit is {}",credit);
-                    return Behaviors.same();
+                    getContext().getLog().info("increasing to {}", credit);
+                    return this;
                 })
                 .build();
     }
@@ -64,19 +69,20 @@ public class WalletOnOffApp extends AbstractBehavior<WalletOnOffApp.Command> {
     }
 
     public static Behavior<Command> create() {
-        return Behaviors.setup(context -> new WalletOnOffApp(context,100));
+        return Behaviors.setup(context -> new WalletOnOff(context, 0));
     }
 
-    private Behavior<Command> deactivateWallet() {
+    private Behavior<Command> deactivated() {
         return Behaviors.receive(Command.class)
-                .onMessage(Active.class, message -> createReceive())
-                .onMessage(Deactivate.class, message ->{
-                    getContext().getLog().debug("Wallet was deactivated ");
-                    return Behaviors.same();
+                .onMessage(Active.class, message -> {
+                    getContext().getLog().info("activating");
+                    activated();
+                    return this;
                 })
+                .onMessage(Deactivate.class, message -> this)
                 .onMessage(Increase.class, message -> {
-                    getContext().getLog().debug("Wallet was deactivated ");
-                    return Behaviors.same();
+                    getContext().getLog().info("wallet is deactivated. Can't increase");
+                    return this;
                 })
                 .build();
     }

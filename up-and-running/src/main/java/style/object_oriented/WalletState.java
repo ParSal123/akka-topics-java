@@ -9,8 +9,20 @@ import akka.actor.typed.javadsl.Receive;
 
 import java.io.IOException;
 
-public class WalletStateApp extends AbstractBehavior<WalletStateApp.Command> {
-    int currency = 0;
+public class WalletState extends AbstractBehavior<WalletState.Command> {
+
+    public static void main(String[] args) throws IOException {
+        ActorSystem<Command> guardian = ActorSystem.create(WalletState.create(0, 2), "wallet-state");
+        guardian.tell(new Increase(1));
+        guardian.tell(new Increase(1));
+        guardian.tell(new Increase(1));
+
+        System.out.println("Press ENTER to terminate");
+        System.in.read();
+        guardian.terminate();
+    }
+
+    int count = 0;
     int max = 0;
 
     interface Command {
@@ -33,12 +45,12 @@ public class WalletStateApp extends AbstractBehavior<WalletStateApp.Command> {
     }
 
     public static Behavior<Command> create( int currency, int max) {
-        return Behaviors.setup(context -> new WalletStateApp(context, currency,max));
+        return Behaviors.setup(context -> new WalletState(context, currency,max));
     }
 
-    public WalletStateApp(ActorContext<Command> context, int currency, int max) {
+    public WalletState(ActorContext<Command> context, int currency, int max) {
         super(context);
-        this.currency = currency;
+        this.count = currency;
         this.max = max;
     }
 
@@ -51,38 +63,26 @@ public class WalletStateApp extends AbstractBehavior<WalletStateApp.Command> {
     }
 
     private Behavior<Command> increaseWallet(Increase increase) {
-        currency += increase.currency;
-        int current = currency + increase.currency;
+        int current = count + increase.currency;
         if (current <= max) {
+            count=current;
             getContext().getLog().info("increasing to {}", current);
             return this;
         }
         getContext().getLog().info("I'm overloaded. Counting '{}' while max is '{}'. Stopping", current, max);
-        return Behaviors.same();
+        return this;
     }
 
     private Behavior<Command> decreaseWallet(Decrease decrease) {
 
-        currency = currency - decrease.currency;
-        if (currency < 0) {
+        count = count - decrease.currency;
+        if (count < 0) {
             getContext().getLog().info("Can't run below zero. Stopping.");
             return Behaviors.stopped();
         } else {
-            getContext().getLog().info("decreasing to {}", currency);
+            getContext().getLog().info("decreasing to {}", count);
             return this;
         }
     }
 
-    public static void main(String[] args) throws IOException {
-        ActorSystem<Command> guardian = ActorSystem.create(WalletStateApp.create(0, 2), "wallet-state");
-        guardian.tell(new Increase(1));
-        guardian.tell(new Decrease(1));
-        guardian.tell(new Decrease(1));
-        guardian.tell(new Increase(1));
-        guardian.tell(new Increase(1));
-
-        System.out.println("Press ENTER to terminate");
-        System.in.read();
-        guardian.terminate();
-    }
 }

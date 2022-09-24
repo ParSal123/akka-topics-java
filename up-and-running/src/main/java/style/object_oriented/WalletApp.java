@@ -10,23 +10,22 @@ import akka.actor.typed.javadsl.Receive;
 import java.io.IOException;
 
 public class WalletApp extends AbstractBehavior<Integer> {
-    int credit = 0;
 
     public static void main(String[] args) throws IOException {
-        final ActorSystem<Integer> systemGuardian = ActorSystem.create(WalletApp.create(10), "walletApp");
-        systemGuardian.tell(10);
+        final ActorSystem<Integer> guardian = ActorSystem.create(WalletApp.create(), "hello-world");
+        guardian.tell(1);
+        guardian.tell(10);
         System.out.println("Press ENTER to terminate");
         System.in.read();
-        systemGuardian.terminate();
+        guardian.terminate();
 
     }
-    public WalletApp(ActorContext<Integer> context, int credit) {
+    public WalletApp(ActorContext<Integer> context) {
         super(context);
-        this.credit = credit;
     }
 
-    public static Behavior<Integer> create(int credit) {
-        return Behaviors.setup(context -> new WalletApp(context, credit));
+    public static Behavior<Integer> create() {
+        return Behaviors.setup(WalletApp::new);
     }
 
     @Override
@@ -35,9 +34,8 @@ public class WalletApp extends AbstractBehavior<Integer> {
                 .build();
     }
 
-    private Behavior<Integer> showCredit(Integer newCredit){
-        this.credit+=newCredit;
-        getContext().getLog().debug("wallet new credit {}",credit);
-        return Behaviors.same();
+    private Behavior<Integer> showCredit(Integer message){
+        getContext().getLog().info("received '{}' dollar(s)", message);
+        return this;
     }
 }
