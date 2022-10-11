@@ -30,11 +30,11 @@ public class WalletApp extends AbstractBehavior<Integer> {
 
   @Override
   public Receive<Integer> createReceive() {
-    return newReceiveBuilder().onMessage(Integer.class, this::showCredit).build();
+    return newReceiveBuilder().onMessage(Integer.class, this::logMessage).build();
   }
 
-  private Behavior<Integer> showCredit(Integer newCredit) {
-    getContext().getLog().info("received '{}' dollar(s)", newCredit);
-    return Behaviors.same();
+  private Behavior<Integer> logMessage(Integer message) {
+    getContext().getLog().info("received '{}' dollar(s)", message);
+    return this;
   }
 }

@@ -36,7 +36,8 @@ class WalletTimer {
                     context.getLog().info("increasing to {}", current);
                     return activated(current);
                   } else if (message instanceof Deactivate deactivate) {
-                    timers.startSingleTimer(new Activate(), Duration.ofSeconds(deactivate.seconds));
+                    timers.startSingleTimer(
+                        Activate.INSTANCE, Duration.ofSeconds(deactivate.seconds));
                     return deactivated(total);
                   } else if (message instanceof Activate) {
                     return Behaviors.same();
@@ -66,11 +67,13 @@ class WalletTimer {
         });
   }
 
+  private enum Activate implements Command {
+    INSTANCE
+  }
+
   public sealed interface Command {}
 
   public record Increase(int currency) implements Command {}
 
   public record Deactivate(int seconds) implements Command {}
-
-  private static final class Activate implements Command {}
 }
