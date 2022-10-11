@@ -29,6 +29,7 @@
         <module>unit-testing</module>
         <module>supervision</module>
         <module>discovery-routers</module>
+        <module>chapter08a</module>
     </modules>
 
     <dependencyManagement>
