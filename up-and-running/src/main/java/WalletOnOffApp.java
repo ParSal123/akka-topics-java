@@ -4,16 +4,18 @@ import akka.actor.typed.ActorSystem;
 import akka.actor.typed.Behavior;
 import akka.actor.typed.javadsl.Behaviors;
 import java.io.IOException;
+import state.WalletOnOff.Activate;
+import state.WalletOnOff.Deactivate;
 
 public class WalletOnOffApp {
 
   public static void main(String[] args) throws IOException {
     ActorSystem<WalletOnOff.Command> guardian =
-        ActorSystem.create(WalletOnOff.createWallet(), "wallet-on-off");
+        ActorSystem.create(WalletOnOff.create(), "wallet-on-off");
     guardian.tell(new WalletOnOff.Increase(1));
-    guardian.tell(new WalletOnOff.Deactivate());
+    guardian.tell(Deactivate.INSTANCE);
     guardian.tell(new WalletOnOff.Increase(1));
-    guardian.tell(new WalletOnOff.Activate());
+    guardian.tell(Activate.INSTANCE);
     guardian.tell(new WalletOnOff.Increase(1));
 
     System.out.println("Press ENTER to terminate");
@@ -24,7 +26,7 @@ public class WalletOnOffApp {
 
 class WalletOnOff {
 
-  public static Behavior<Command> createWallet() {
+  public static Behavior<Command> create() {
     return activated(0);
   }
 
@@ -64,11 +66,15 @@ class WalletOnOff {
         });
   }
 
+  public enum Deactivate implements Command {
+    INSTANCE
+  }
+
+  public enum Activate implements Command {
+    INSTANCE
+  }
+
   public sealed interface Command {}
 
   public record Increase(int currency) implements Command {}
-
-  public static final class Deactivate implements Command {}
-
-  public static final class Activate implements Command {}
 }
